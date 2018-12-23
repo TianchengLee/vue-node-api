@@ -33,9 +33,9 @@ app.all('/api/*',(req,res,next)=>{
 const apiRoute = require('./routes/apiRoute.js');
 app.use('/',apiRoute);
 
-app.listen(8899,'127.0.0.1',()=>{
+app.listen(8888,()=>{
 
-	console.log('api服务已启动, :8899');
+	console.log('api服务已启动, :8888');
 });
 
 // 大多数跨域只存在开发阶段
