@@ -5,16 +5,18 @@ let fialState = 1 // 表示失败
 // 1.0 7牛云存储域名
 let domain = 'http://ofv795nmp.bkt.clouddn.com/'
 
-exports.getlunbo= (req, res) => {
- let resObj = {status: successState, message: [{
-            url: 'http://www.itcast.cn/subject/phoneweb/index.html',
-            img: 'http://ofv795nmp.bkt.clouddn.com/vuelogobanner1.jpg'
-          }, {
-            url: 'http://www.itcast.cn/subject/phoneweb/index.html',
-            img: 'http://ofv795nmp.bkt.clouddn.com/vuelogobanner2-1.jpg'
-          }]}
+exports.getlunbo = (req, res) => {
+  let resObj = {
+    status: successState, message: [{
+      url: 'http://www.itcast.cn/subject/phoneweb/index.html',
+      img: 'http://ofv795nmp.bkt.clouddn.com/vuelogobanner1.jpg'
+    }, {
+      url: 'http://www.itcast.cn/subject/phoneweb/index.html',
+      img: 'http://ofv795nmp.bkt.clouddn.com/vuelogobanner2-1.jpg'
+    }]
+  }
 
-     res.end(JSON.stringify(resObj))
+  res.end(JSON.stringify(resObj))
 
 }
 
@@ -23,112 +25,15 @@ exports.getlunbo= (req, res) => {
  * @param {*} req 
  * @param {*} res 
  */
-exports.login = (req,res) =>{
-  let resObj = {status: successState, message: ''}
+exports.login = (req, res) => {
+  let resObj = { status: successState, message: '' }
   const data = req.body
   console.log(data)
 
   let sql = `SELECT * from dt_users where user_name = '${data.account}' and password = ${data.password}`
   console.log('login', sql)
   req.db.driver.execQuery(sql, (err, datas) => {
-      // 4.0 判断是否异常
-      if (err)    {
-         resObj.status = fialState
-         resObj.message = err.message
-         res.end(JSON.stringify(resObj))
-         return
-      }
-
-      console.log(datas)
-      // 5.0 获取数据成功
-      resObj.message = datas
-      res.end(JSON.stringify(resObj))
-  })
-}
-
-
-
-// 1.0 获取图片新闻资讯列表
-exports.getnewslist = (req, res) => {
-   // 代表返回的数据结构
-  let resObj = {status: successState, message: ''}
-
-   // 3.0 利用orm发送sql语句查询出来分页数据即可
-   /*
-   id : 资讯主键
-   ,title : 资讯标题
-   ,add_time ：资讯创建的事件
-   ,zhaiyao：摘要
-   ,click：点击量
-   ,img_url:图片地址，前缀是7牛云存储域名
-    */
-  let sql = " SELECT id,title,add_time,left(zhaiyao,25) as zhaiyao,click,concat('" + domain + "',img_url) as img_url FROM dt_article where img_url > '' and channel_id = 6 limit 0,10 "
-  console.log('获取图文资讯sql语句：============>', sql)
-  req.db.driver.execQuery(sql, (err, datas) => {
-      // 4.0 判断是否异常
-      if (err)    {
-         resObj.status = fialState
-         resObj.message = err.message
-         res.end(JSON.stringify(resObj))
-         return
-      }
-
-      // 5.0 获取数据成功
-      resObj.message = datas
-      res.end(JSON.stringify(resObj))
-  })
-}
-
-// 2.0 根据资讯id获取资讯详细内容
-exports.getnew = (req, res) => {
-   // 代表返回的数据结构
-  let resObj = {status: successState, message: ''}
-
-   // 1.0 获取参数值
-  let newid = req.params.newid
-
-   // 2.0 执行查询操作
-  let sql = 'select id,title,click,add_time,content from dt_article  where id=' + newid
-  console.log('获取资讯明细sql===>', sql)
-  req.db.driver.execQuery(sql, (err, data) => {
-   // 3.0 判断是否异常
-      if (err)    {
-         resObj.status = fialState
-         resObj.message = err.message
-         res.end(JSON.stringify(resObj))
-         return
-      }
-
-    // 4.0 获取数据成功
-      resObj.message = data
-      res.end(JSON.stringify(resObj))
-  })
-}
-
-// 3.0 商品
-exports.getgoods = (req, res) => {
-   // 代表返回的数据结构
-  let resObj = {status: successState, message: ''}
-  let pageindex = req.query.pageindex
-  if(!pageindex){
-    pageindex =1;
-  }
-  let pagesize = 10
-  let skipcount = (pageindex - 1) * pagesize
-
-   // 3.0 利用orm发送sql语句查询出来分页数据即可
-   /*
-   id : 资讯主键
-   ,title : 资讯标题
-   ,add_time ：资讯创建的事件
-   ,zhaiyao：摘要
-   ,click：点击量
-   ,img_url:图片地址，前缀是7牛云存储域名
-    */
-  let sql = `SELECT a.id,a.title,a.add_time,left(a.zhaiyao,25) as zhaiyao,a.click,concat('${domain}',a.img_url) as img_url,b.sell_price,b.market_price,b.stock_quantity FROM dt_article as a,dt_article_attribute_value b where a.id = b.article_id and a.channel_id = 7 limit ${skipcount},${pagesize} `
-  console.log('获取图文资讯sql语句：============>', sql)
-  req.db.driver.execQuery(sql, (err, datas) => {
-      // 4.0 判断是否异常
+    // 4.0 判断是否异常
     if (err) {
       resObj.status = fialState
       resObj.message = err.message
@@ -136,7 +41,104 @@ exports.getgoods = (req, res) => {
       return
     }
 
-      // 5.0 获取数据成功
+    console.log(datas)
+    // 5.0 获取数据成功
+    resObj.message = datas
+    res.end(JSON.stringify(resObj))
+  })
+}
+
+
+
+// 1.0 获取图片新闻资讯列表
+exports.getnewslist = (req, res) => {
+  // 代表返回的数据结构
+  let resObj = { status: successState, message: '' }
+
+  // 3.0 利用orm发送sql语句查询出来分页数据即可
+  /*
+  id : 资讯主键
+  ,title : 资讯标题
+  ,add_time ：资讯创建的事件
+  ,zhaiyao：摘要
+  ,click：点击量
+  ,img_url:图片地址，前缀是7牛云存储域名
+   */
+  let sql = " SELECT id,title,add_time,left(zhaiyao,25) as zhaiyao,click,concat('" + domain + "',img_url) as img_url FROM dt_article where img_url > '' and channel_id = 6 limit 0,10 "
+  console.log('获取图文资讯sql语句：============>', sql)
+  req.db.driver.execQuery(sql, (err, datas) => {
+    // 4.0 判断是否异常
+    if (err) {
+      resObj.status = fialState
+      resObj.message = err.message
+      res.end(JSON.stringify(resObj))
+      return
+    }
+
+    // 5.0 获取数据成功
+    resObj.message = datas
+    res.end(JSON.stringify(resObj))
+  })
+}
+
+// 2.0 根据资讯id获取资讯详细内容
+exports.getnew = (req, res) => {
+  // 代表返回的数据结构
+  let resObj = { status: successState, message: '' }
+
+  // 1.0 获取参数值
+  let newid = req.params.newid
+
+  // 2.0 执行查询操作
+  let sql = 'select id,title,click,add_time,content from dt_article  where id=' + newid
+  console.log('获取资讯明细sql===>', sql)
+  req.db.driver.execQuery(sql, (err, data) => {
+    // 3.0 判断是否异常
+    if (err) {
+      resObj.status = fialState
+      resObj.message = err.message
+      res.end(JSON.stringify(resObj))
+      return
+    }
+
+    // 4.0 获取数据成功
+    resObj.message = data
+    res.end(JSON.stringify(resObj))
+  })
+}
+
+// 3.0 商品
+exports.getgoods = (req, res) => {
+  // 代表返回的数据结构
+  let resObj = { status: successState, message: '' }
+  let pageindex = req.query.pageindex
+  if (!pageindex) {
+    pageindex = 1;
+  }
+  let pagesize = 10
+  let skipcount = (pageindex - 1) * pagesize
+
+  // 3.0 利用orm发送sql语句查询出来分页数据即可
+  /*
+  id : 资讯主键
+  ,title : 资讯标题
+  ,add_time ：资讯创建的事件
+  ,zhaiyao：摘要
+  ,click：点击量
+  ,img_url:图片地址，前缀是7牛云存储域名
+   */
+  let sql = `SELECT a.id,a.title,a.add_time,left(a.zhaiyao,25) as zhaiyao,a.click,concat('${domain}',a.img_url) as img_url,b.sell_price,b.market_price,b.stock_quantity FROM dt_article as a,dt_article_attribute_value b where a.id = b.article_id and a.channel_id = 7 limit ${skipcount},${pagesize} `
+  console.log('获取图文资讯sql语句：============>', sql)
+  req.db.driver.execQuery(sql, (err, datas) => {
+    // 4.0 判断是否异常
+    if (err) {
+      resObj.status = fialState
+      resObj.message = err.message
+      res.end(JSON.stringify(resObj))
+      return
+    }
+
+    // 5.0 获取数据成功
     resObj.message = datas
     res.end(JSON.stringify(resObj))
   })
@@ -158,14 +160,14 @@ select * from dt_article_comment dac WHERE dac.article_id=101
 
 // 商品图文描述
 exports.getgooddesc = (req, res) => {
-   // 代表返回的数据结构
-  let resObj = {status: successState, message: ''}
- 
- let id = req.params.id;
+  // 代表返回的数据结构
+  let resObj = { status: successState, message: '' }
+
+  let id = req.params.id;
   let sql = ` SELECT title,content FROM dt_article da WHERE da.id = ${id} `
-  console.log(	'获取商品图文描述sql语句：============>', sql)
+  console.log('获取商品图文描述sql语句：============>', sql)
   req.db.driver.execQuery(sql, (err, datas) => {
-      // 4.0 判断是否异常
+    // 4.0 判断是否异常
     if (err) {
       resObj.status = fialState
       resObj.message = err.message
@@ -173,7 +175,7 @@ exports.getgooddesc = (req, res) => {
       return
     }
 
-      // 5.0 获取数据成功
+    // 5.0 获取数据成功
     resObj.message = datas
     res.end(JSON.stringify(resObj))
   })
@@ -182,15 +184,15 @@ exports.getgooddesc = (req, res) => {
 // 获取商品标题，价格，参数区数据
 // getgoodsinfo
 exports.getgoodsinfo = (req, res) => {
-   // 代表返回的数据结构
-  let resObj = {status: successState, message: ''}
- 
- let id = req.params.id;
+  // 代表返回的数据结构
+  let resObj = { status: successState, message: '' }
+
+  let id = req.params.id;
   let sql = ` SELECT da.id,da.title,da.add_time,daa.goods_no,daa.stock_quantity,daa.market_price,daa.sell_price FROM dt_article da , dt_article_attribute_value daa 
 				WHERE  da.id = daa.article_id and da.id = ${id} `
-  console.log(	'获取商品获取商品标题，价格，参数区数据sql语句：============>', sql)
+  console.log('获取商品获取商品标题，价格，参数区数据sql语句：============>', sql)
   req.db.driver.execQuery(sql, (err, datas) => {
-      // 4.0 判断是否异常
+    // 4.0 判断是否异常
     if (err) {
       resObj.status = fialState
       resObj.message = err.message
@@ -198,7 +200,7 @@ exports.getgoodsinfo = (req, res) => {
       return
     }
 
-      // 5.0 获取数据成功
+    // 5.0 获取数据成功
     resObj.message = datas
     res.end(JSON.stringify(resObj))
   })
@@ -206,13 +208,13 @@ exports.getgoodsinfo = (req, res) => {
 
 //获取购物车列表数据
 exports.getshopcarlist = (req, res) => {
-   // 代表返回的数据结构
-  let resObj = {status: successState, message: ''}
+  // 代表返回的数据结构
+  let resObj = { status: successState, message: '' }
 
-   // 1.0 获取参数值
+  // 1.0 获取参数值
   let ids = req.params.ids
- 
-   // 2.0 执行查询操作
+
+  // 2.0 执行查询操作
   let sql = `
   			  SELECT count(distinct tb1.id) as cou, tb1.* FROM (
 				SELECT  da.id,da.title,daa.sell_price,alb.thumb_path
@@ -224,25 +226,25 @@ exports.getshopcarlist = (req, res) => {
 
   console.log('获取购物车列表sql===>', sql)
   req.db.driver.execQuery(sql, (err, data) => {
-   // 3.0 判断是否异常
-      if (err)    {
-         resObj.status = fialState
-         resObj.message = err.message
-         res.end(JSON.stringify(resObj))
-         return
-      }
+    // 3.0 判断是否异常
+    if (err) {
+      resObj.status = fialState
+      resObj.message = err.message
+      res.end(JSON.stringify(resObj))
+      return
+    }
 
     // 4.0 获取数据成功
-      resObj.message = data
-      res.end(JSON.stringify(resObj))
+    resObj.message = data
+    res.end(JSON.stringify(resObj))
   })
 }
 
 
 // 4.0 图片分享
 exports.getimages = (req, res) => {
-   // 代表返回的数据结构
-  let resObj = {status: successState, message: ''}
+  // 代表返回的数据结构
+  let resObj = { status: successState, message: '' }
 
   let cateid = req.params.cateid - 0
 
@@ -252,14 +254,14 @@ exports.getimages = (req, res) => {
     sql = ' select * from dt_article where channel_id = 9 '
   }
 
-   // 3.0 利用orm发送sql语句查询出来分页数据即可
-   /*
+  // 3.0 利用orm发送sql语句查询出来分页数据即可
+  /*
 
-    */
+   */
 
   console.log('获取图片分享sql语句：============>', sql)
   req.db.driver.execQuery(sql, (err, datas) => {
-      // 4.0 判断是否异常
+    // 4.0 判断是否异常
     if (err) {
       resObj.status = fialState
       resObj.message = err.message
@@ -267,7 +269,7 @@ exports.getimages = (req, res) => {
       return
     }
 
-      // 5.0 获取数据成功
+    // 5.0 获取数据成功
     resObj.message = datas
     res.end(JSON.stringify(resObj))
   })
@@ -276,72 +278,18 @@ exports.getimages = (req, res) => {
 
 // 4.0.1 根据id获取图片详细内容
 exports.getimage = (req, res) => {
-   // 代表返回的数据结构
-  let resObj = {status: successState, message: ''}
+  // 代表返回的数据结构
+  let resObj = { status: successState, message: '' }
 
-   // 1.0 获取参数值
+  // 1.0 获取参数值
   let newid = req.params.imgid
 
-   // 2.0 执行查询操作
+  // 2.0 执行查询操作
   let sql = `select thumb_path as src  from dt_article_albums where article_id =${newid}`
 
   console.log('获取图片分享明细中缩略图sql===>', sql)
   req.db.driver.execQuery(sql, (err, data) => {
-   // 3.0 判断是否异常
-      if (err)    {
-         resObj.status = fialState
-         resObj.message = err.message
-         res.end(JSON.stringify(resObj))
-         return
-      }
-
-    // 4.0 获取数据成功
-      resObj.message = data
-      res.end(JSON.stringify(resObj))
-  })
-}
-
-
-// 4.0.1 根据id获取图片详细内容
-exports.getimageInfo = (req, res) => {
-   // 代表返回的数据结构
-  let resObj = {status: successState, message: ''}
-
-   // 1.0 获取参数值
-  let newid = req.params.imgid
-
-   // 2.0 执行查询操作
-  let sql = `select id,title,click,add_time,content from dt_article where id=${newid}`
-
-  console.log('获取图片分享明细sql===>', sql)
-  req.db.driver.execQuery(sql, (err, data) => {
-   // 3.0 判断是否异常
-      if (err)    {
-         resObj.status = fialState
-         resObj.message = err.message
-         res.end(JSON.stringify(resObj))
-         return
-      }
-
-    // 4.0 获取数据成功
-      resObj.message = data
-      res.end(JSON.stringify(resObj))
-  })
-}
-
-// 5.0 获取图片分享分类
-exports.getimgcategory = (req, res) => {
-   // 代表返回的数据结构
-  let resObj = {status: successState, message: ''}
-
-   // 3.0 利用orm发送sql语句查询出来分页数据即可
-   /*
-
-    */
-  let sql = ' select title,id from dtcmsdb4.dt_article_category where channel_id = 9 '
-  console.log('获取图片分享分类sql语句：============>', sql)
-  req.db.driver.execQuery(sql, (err, datas) => {
-      // 4.0 判断是否异常
+    // 3.0 判断是否异常
     if (err) {
       resObj.status = fialState
       resObj.message = err.message
@@ -349,7 +297,61 @@ exports.getimgcategory = (req, res) => {
       return
     }
 
-      // 5.0 获取数据成功
+    // 4.0 获取数据成功
+    resObj.message = data
+    res.end(JSON.stringify(resObj))
+  })
+}
+
+
+// 4.0.1 根据id获取图片详细内容
+exports.getimageInfo = (req, res) => {
+  // 代表返回的数据结构
+  let resObj = { status: successState, message: '' }
+
+  // 1.0 获取参数值
+  let newid = req.params.imgid
+
+  // 2.0 执行查询操作
+  let sql = `select id,title,click,add_time,content from dt_article where id=${newid}`
+
+  console.log('获取图片分享明细sql===>', sql)
+  req.db.driver.execQuery(sql, (err, data) => {
+    // 3.0 判断是否异常
+    if (err) {
+      resObj.status = fialState
+      resObj.message = err.message
+      res.end(JSON.stringify(resObj))
+      return
+    }
+
+    // 4.0 获取数据成功
+    resObj.message = data
+    res.end(JSON.stringify(resObj))
+  })
+}
+
+// 5.0 获取图片分享分类
+exports.getimgcategory = (req, res) => {
+  // 代表返回的数据结构
+  let resObj = { status: successState, message: '' }
+
+  // 3.0 利用orm发送sql语句查询出来分页数据即可
+  /*
+
+   */
+  let sql = ' select title,id from dtcmsdb4.dt_article_category where channel_id = 9 '
+  console.log('获取图片分享分类sql语句：============>', sql)
+  req.db.driver.execQuery(sql, (err, datas) => {
+    // 4.0 判断是否异常
+    if (err) {
+      resObj.status = fialState
+      resObj.message = err.message
+      res.end(JSON.stringify(resObj))
+      return
+    }
+
+    // 5.0 获取数据成功
     resObj.message = datas
     res.end(JSON.stringify(resObj))
   })
@@ -357,68 +359,68 @@ exports.getimgcategory = (req, res) => {
 
 //6.0 获取评论信息
 exports.getcomments = (req, res) => {
-   // 代表返回的数据结构
-  let resObj = {status: successState, message: ''}
+  // 代表返回的数据结构
+  let resObj = { status: successState, message: '' }
 
-   // 1.0 获取参数值
+  // 1.0 获取参数值
   let artid = req.params.artid
   let pageindex = req.query.pageindex
   let pagesize = 10;
   let skipCount = (pageindex - 1) * pagesize
 
-   // 2.0 执行查询操作
+  // 2.0 执行查询操作
   let sql = `select user_name,add_time,content from dt_article_comment where article_id = ${artid} order by add_time desc limit ${skipCount},${pagesize}`
 
   console.log('获取评论sql===>', sql)
   req.db.driver.execQuery(sql, (err, data) => {
-   // 3.0 判断是否异常
-      if (err)    {
-         resObj.status = fialState
-         resObj.message = err.message
-         res.end(JSON.stringify(resObj))
-         return
-      }
+    // 3.0 判断是否异常
+    if (err) {
+      resObj.status = fialState
+      resObj.message = err.message
+      res.end(JSON.stringify(resObj))
+      return
+    }
 
     // 4.0 获取数据成功
-      resObj.message = data
-      res.end(JSON.stringify(resObj))
+    resObj.message = data
+    res.end(JSON.stringify(resObj))
   })
 }
 
 
 //7.0 提交评论数据
 exports.postcomment = (req, res) => {
-   // 代表返回的数据结构
-  let resObj = {status: successState, message: ''}
+  // 代表返回的数据结构
+  let resObj = { status: successState, message: '' }
 
-   // 1.0 获取参数值
+  // 1.0 获取参数值
   let artid = req.params.artid
   //获取评论内容
-  req.on('data',(chunk)=>{
+  req.on('data', (chunk) => {
     let commentTxt = chunk.toString();
-    const qs=   require('querystring');
+    const qs = require('querystring');
     let commentObj = qs.parse(commentTxt);
 
 
-       // 2.0 执行查询操作
-      let sql = `insert into  dt_article_comment(channel_id,article_id,parent_id,user_id,user_name,user_ip,
+    // 2.0 执行查询操作
+    let sql = `insert into  dt_article_comment(channel_id,article_id,parent_id,user_id,user_name,user_ip,
                                 content,is_lock,add_time,is_reply,reply_content,reply_time)
                   values (7,${artid},0,0,'匿名用户','127.0.0.1','${commentObj.content}',0,NOW(),0,'',NOW())`
 
-      console.log('post提交评论sql===>', sql)
-      req.db.driver.execQuery(sql, (err, data) => {
-       // 3.0 判断是否异常
-          if (err)    {
-             resObj.status = fialState
-             resObj.message = err.message
-             res.end(JSON.stringify(resObj))
-             return
-          }
+    console.log('post提交评论sql===>', sql)
+    req.db.driver.execQuery(sql, (err, data) => {
+      // 3.0 判断是否异常
+      if (err) {
+        resObj.status = fialState
+        resObj.message = err.message
+        res.end(JSON.stringify(resObj))
+        return
+      }
 
-        // 4.0 获取数据成功
-          resObj.message = '评论提交成功'
-          res.end(JSON.stringify(resObj))
-      })
+      // 4.0 获取数据成功
+      resObj.message = '评论提交成功'
+      res.end(JSON.stringify(resObj))
+    })
 
 
   })
@@ -430,84 +432,93 @@ exports.postcomment = (req, res) => {
 
 // 品牌管理
 exports.getprodlist = (req, res) => {
-   // 代表返回的数据结构
-  let resObj = {status: successState, message: ''}
+  // 代表返回的数据结构
+  let resObj = { status: successState, message: '' }
 
 
-   // 2.0 执行查询操作
-  let sql = `select * from dc_product`;
+  // 2.0 执行查询操作
+  let sql = `select * from dc_product ORDER BY ctime DESC LIMIT 0, 5`;
 
   console.log('获取品牌列表sql===>', sql)
   req.db.driver.execQuery(sql, (err, data) => {
-   // 3.0 判断是否异常
-      if (err)    {
-         resObj.status = fialState
-         resObj.message = err.message
-         res.end(JSON.stringify(resObj))
-         return
-      }
+    // 3.0 判断是否异常
+    if (err) {
+      resObj.status = fialState
+      resObj.message = err.message
+      res.end(JSON.stringify(resObj))
+      return
+    }
 
     // 4.0 获取数据成功
-      resObj.message = data
-      res.end(JSON.stringify(resObj))
+    resObj.message = data
+    res.end(JSON.stringify(resObj))
   })
 }
 
 
 // 删除品牌
 exports.delproduct = (req, res) => {
-   // 代表返回的数据结构
-  let resObj = {status: successState, message: ''}
+  // 代表返回的数据结构
+  let resObj = { status: successState, message: '' }
   let id = req.params.id;
 
-   // 2.0 执行查询操作
+  // 2.0 执行查询操作
   let sql = `delete from dc_product where id=${id}`;
 
   console.log('删除品牌sql===>', sql);
   req.db.driver.execQuery(sql, (err) => {
-   // 3.0 判断是否异常
-      if (err)    {
-         resObj.status = fialState
-         resObj.message = err.message
-         res.end(JSON.stringify(resObj))
-         return
-      }
+    // 3.0 判断是否异常
+    if (err) {
+      resObj.status = fialState
+      resObj.message = err.message
+      res.end(JSON.stringify(resObj))
+      return
+    }
 
     // 4.0 获取数据成功
-      resObj.message = '删除品牌数据ok'
-      res.end(JSON.stringify(resObj))
+    resObj.message = '删除品牌数据ok'
+    res.end(JSON.stringify(resObj))
   })
 }
 
 // 新增品牌
 exports.addproduct = (req, res) => {
-   // 代表返回的数据结构
-  let resObj = {status: successState, message: ''}
+  // 代表返回的数据结构
+  let resObj = { status: successState, message: '' }
 
+  if (req.body.name) {
+    addToDB(req.body)
+  }
 
+  let bodyTxt = ''
   //获取评论内容
-  req.on('data',(chunk)=>{
-    let bodyTxt = chunk.toString();
-    const qs=   require('querystring');
-    let bodyObj = qs.parse(bodyTxt);
-
-       // 2.0 执行查询操作
-      let sql = `insert into dc_product(name,ctime) values ('${bodyObj.name}',NOW())`
-
-      console.log('新增品牌sql===>', sql)
-      req.db.driver.execQuery(sql, (err, data) => {
-       // 3.0 判断是否异常
-          if (err)    {
-             resObj.status = fialState
-             resObj.message = err.message
-             res.end(JSON.stringify(resObj))
-             return
-          }
-
-        // 4.0 获取数据成功
-          resObj.message = '新增品牌成功'
-          res.end(JSON.stringify(resObj))
-      })
-
+  req.on('data', (chunk) => {
+    bodyTxt += chunk.toString()
   })
+
+  req.on('end', () => {
+    const qs = require('querystring');
+    let bodyObj = qs.parse(bodyTxt);
+    addToDB(bodyObj)
+  })
+
+  function addToDB(bodyObj) {
+    // 2.0 执行查询操作
+    let sql = `insert into dc_product(name,ctime) values ('${bodyObj.name}',NOW())`
+
+    console.log('新增品牌sql===>', sql)
+    req.db.driver.execQuery(sql, (err, data) => {
+      // 3.0 判断是否异常
+      if (err) {
+        resObj.status = fialState
+        resObj.message = err.message
+        res.end(JSON.stringify(resObj))
+        return
+      }
+
+      // 4.0 获取数据成功
+      resObj.message = '新增品牌成功'
+      res.end(JSON.stringify(resObj))
+    })
+  }
 }

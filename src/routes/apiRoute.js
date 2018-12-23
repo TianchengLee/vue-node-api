@@ -74,7 +74,7 @@ route.all('/api/jsonp', (req, res) => {
 route.get('/api/getprodlist', apiCtrl.getprodlist);
 
 //7.0.2 新增品牌数据
-route.all('/api/addproduct', apiCtrl.addproduct);
+route.post('/api/addproduct', apiCtrl.addproduct);
 
 //7.0.3 删除品牌数据
 route.get('/api/delproduct/:id', apiCtrl.delproduct);
